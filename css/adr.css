@@ -1,0 +1,122 @@
+.block-islandora_solr_search {
+     float: left;
+}
+
+.searchDesc {
+     float: left;
+     margin-bottom: 15px;
+     width: 550px;
+}
+
+.searchDesc h2 {
+     display: inline;
+}
+
+.pager {
+     float: right;
+     font-size: 120%;
+     font-weight: 700;
+}
+
+.pager img {
+     vertical-align: middle;
+}
+
+.results {
+     background-color: #FFFFFF;
+     border: 2px solid #E2DDDB;
+     float: left;
+     padding: 10px;
+     width: 98%
+}
+
+
+.results table td {
+     border-bottom: 1px solid #E2DDDB;
+     padding: 5px 0px;
+}
+
+.results div.metadata a {
+     font-size: 110%;
+     font-weight: 700;
+}
+
+.results div.thumbnail {
+     background-color: #FFFFFF;
+     height: 100px;
+     overflow: hidden;
+     padding: 5px;
+     text-align: center;
+     width: 100px;
+}
+
+.results div.thumbnail img {
+	border: 1px solid #E2DDDB;
+}
+
+.results div.thumbnail a.zoomIcon {
+     background-image: url("../images/zoom.png");
+     height: 16px;
+     margin-left: 84px;
+     margin-top: 84px;
+     position: absolute;
+     width: 16px;
+     z-index: 10;
+}
+
+.results div.thumbnail a {
+     height: 100%;
+     width: 100%;
+}
+
+.results div.metadata {
+     width: 100%;
+}
+
+.results div.metadata ul {
+     list-style: none outside none;
+     margin: 10px 0pt 0pt;
+     padding: 0pt;
+}
+
+.results div.metadata ul li {
+     background-color: #FFFFFF;
+     margin: 0pt;
+     padding: 5px;
+}
+
+.results div.metadata ul li.fulltext {
+     font-style: italic;
+}
+
+.results div.metadata ul li.gray {
+     background-color: #F6F6F5;
+}
+
+.facet-list ul {
+     border-bottom: 1px solid #E2DDDB;
+     margin-left: -8px;
+}
+
+.facet-list ul li {
+     font-size: 120%;
+     list-style: none outside none;
+}
+
+.facet-list ul ul li {
+     font-size: 100%;
+     list-style: none outside none;
+     padding: 2px;
+}
+
+.facet-list ul ul li.alternate {
+    
+}
+
+.facet-list img {
+     vertical-align: middle;
+}
+
+#islandora-solr-modify-search-form {
+     margin: 10px;
+}
