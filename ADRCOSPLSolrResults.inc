@@ -11,7 +11,7 @@
  */
 module_load_include('inc', 'islandora_solr_search', 'IslandoraSolrResults');
 
-class IslandoraCOSolrResults extends IslandoraSolrResults {
+class ADRCOSPLSolrResults extends IslandoraSolrResults {
 
   static $facetSeparator = '~'; //used to separate facets in url
   static $slashReplacement = '~slsh~'; // a pattern used to replace / in url's the slash breaks drupal clean url's
@@ -80,7 +80,7 @@ class IslandoraCOSolrResults extends IslandoraSolrResults {
     }
     $output .= '<tr><td><div class="thumbnail">';
     $img = "<img src='$base_url/fedora/repository/$pid/TN'/>";
-    $output .= l($img, "fedora/repository/$pid", array('attributes' => array('title' => $title), 'html' => 'true')) . '</div>';
+    $output .= l($img, "fedora/repository/$pid", array('attributes' => array('title' => $title), 'html' => 'true'));
     $output .= '<td><div class="metadata"><a href="' . $base_url . '/fedora/repository/' . $pid . '">' . $title . '</a><ul>';
 
     if (!empty($highlight_text)) {
@@ -88,50 +88,40 @@ class IslandoraCOSolrResults extends IslandoraSolrResults {
       if ($highlight_label) {
         $output.="<b>$highlight_label</b>&nbsp;";
       }
+      $output .= '...';
       $output .= $highlight_text;
       $output .= '...';
       $output .= '</li>';
     }
 
-    if (!empty($doc['Abstract'])) {
-      $output.='<li class="gray">';
-      if (is_array($doc['Abstract'])) {
-        foreach ($doc['Abstract'] as $abstract) {
-          $output .= "$abstract";
+    
+    if (!empty($doc['COSPL_CC'])) {
+      $output.='<li class="gray"><b>Creators:</b>&nbsp;';
+      if (is_array($doc['COSPL_CC'])) {
+        foreach ($doc['COSPL_CC'] as $cosplcc) {
+          $output .= "$cosplcc; ";
         }
       }
       else {
-        $output .=$doc['Abstract'];
-      }
-      $output .= '</li>';
-    }
-    if (!empty($doc['Creators'])) {
-      $output.='<li class="gray"><b>Created by:</b>&nbsp;';
-      if (is_array($doc['Creators'])) {
-        foreach ($doc['Creators'] as $creators) {
-          $output .= "$creators; ";
-        }
-      }
-      else {
-        $output .=$doc['Creators'];
+        $output .=$doc['COSPL_CC'];
       }
       $output .= '</li>';
     }
 
-    if (!empty($doc['Date_Created'])) {
-      $output.='<li class="gray"><b>Date Created:</b>&nbsp;';
-      if (is_array($doc['Date_Created'])) {
-        foreach ($doc['Date_Created'] as $dateCreated) {
-          $output .= "$dateCreated";
+ if (!empty($doc['COSPL_Agency'])) {
+      $output.='<li class="gray"><b>Agency:</b>&nbsp;';
+      if (is_array($doc['COSPL_Agency'])) {
+        foreach ($doc['COSPL_Agency'] as $cosplagency) {
+          $output .= "$cosplagency; ";
         }
       }
       else {
-        $output .= $doc['Date_Created'];
+        $output .=$doc['COSPL_Agency'];
       }
       $output .= '</li>';
     }
 
-    if (!empty($doc['Date_Issued'])) {
+      if (!empty($doc['Date_Issued'])) {
       $output.='<li class="gray"><b>Publication Date:</b>&nbsp;';
       if (is_array($doc['Date_Issued'])) {
         foreach ($doc['Date_Issued'] as $dateIssued) {

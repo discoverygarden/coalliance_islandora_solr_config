@@ -2,28 +2,52 @@
 
 // $Id$
 
-
 /**
  * @file
  * Configuration module for islandora_solr_search.module
  */
-
-
-/**
- * Implementation of hook_alter_form.
- * Adds this module's configuration options to islandora_solr_search's configuration page.
- */
-
-function islandora_co_solr_config_form_islandora_solr_admin_settings_alter(&$form, &$form_state) {
-  $module   = 'islandora_co_solr_config';
-  $file     = 'IslandoraCOSolrResults.inc';
-  $class    = 'IslandoraCOSolrResults';
-  $method   = 'displayResults';
-  $config_options = $form['islandora_solr_config_options']['#options'];
-  $config_options["${module}~${file}~${class}~${method}"] = 'Coalliance';
-  $form['islandora_solr_config_options']['#options'] = $config_options;
+function islandora_co_solr_config_menu() {
+  $items['islandora/solr/rss'] = array(
+    'page callback' => 'return_recent',
+    'access arguments' => array('view fedora collection'), //depends of fedora_repository view
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
 }
 
+function islandora_co_solr_config_islandora_solr_primary_display() {
+
+  return array(
+    // 'machine-name' = array(
+    //   'name' => 'Human Readable Name',
+    //   'module' => 'module_name',
+    //   'file' => 'FileName.inc',
+    //   'class' => 'ClassName',
+    //   'function' => 'function_name',
+    //   'description' => 'A description of the display profile',
+    // );
+
+
+
+    'colorado_display' => array(
+      'name' => t('ADR Basic Search'),
+      'module' => 'islandora_co_solr_config',
+      'file' => 'IslandoraCOSolrResults.inc',
+      'class' => "IslandoraCOSolrResults",
+      'function' => "displayResults",
+      'description' => t("Custom display for Colorado Alliance"),
+    ),
+
+      'cospl_display' => array(
+      'name' => t('COSPL Display'),
+      'module' => 'islandora_co_solr_config',
+      'file' => 'ADRCOSPLSolrResults.inc',
+      'class' => 'ADRCOSPLSolrResults',
+      'function' => "displayResults",
+      'description' => t("Custom display for ADR COSPL"),
+    ),
+  );
+}
 
 function islandora_co_solr_config_islandora_solr_secondary_display() {
   return array(
@@ -42,7 +66,6 @@ function islandora_co_solr_config_islandora_solr_secondary_display() {
 /**
  * Implementation of hook_help()
  */
-
 function islandora_co_solr_config_help($path, $arg) {
 
   switch ($path) {
@@ -56,30 +79,46 @@ function islandora_co_solr_config_help($path, $arg) {
         <li>Method - displayResults</l1>
         </ul>
         ", array('!page' => l("Islandora_solr_search configuration page", 'admin/settings/islandora_solr_search'),)
-
-
       );
   }
 }
 
-function islandora_co_solr_config_islandora_solr_primary_display() {
-  return array(
-    // 'machine-name' = array(
-    //   'name' => 'Human Readable Name',
-    //   'module' => 'module_name',
-    //   'file' => 'FileName.inc',
-    //   'class' => 'ClassName',
-    //   'function' => 'function_name',
-    //   'description' => 'A description of the display profile',
-    // );
-    'colorado_display' => array(
-      'name' => t('Colorado Alliance custom output'),
-      'module' => 'islandora_co_solr_config',
-      'file' => 'IslandoraCOSolrResults.inc',
-      'class' => "IslandoraCOSolrResults",
-      'function' => "displayResults",
-      'description' => t("Custom display for Colorado Alliance"),
-    ),
-  );
+function return_recent($query=NULL, $fq=NULL, $dismax=NULL) {
+
+  global $queryClass;
+  islandora_solr_search_init();
+  if (!isset($query)) {
+    $query = '*:*';
+  }
+  // Build and execute Apache Solr query
+  $queryResult = $queryClass->buildAndExecuteQuery($query, $fq, $dismax, array('sort' => 'date_s desc'));
+  $secondary_profiles = module_invoke_all("islandora_solr_secondary_display");
+  $profile = $secondary_profiles['rss'];
+  require_once(drupal_get_path('module', $profile['module']) . '/' . $profile['file']);
+  $solrClass = $profile['class'];
+  $solrFunction = $profile['function'];
+  $implementation = new $solrClass();
+  $output = $implementation->$solrFunction($queryClass);
+
+  return $output;
+
+
+//  return $queryResult;
 }
 
+function islandora_co_solr_config_islandora_solr_search_query_processor($processor) {
+  global $user;
+  $fq_builder = array();
+  if ($user->uid != 0) {
+    $name = $user->name;
+    $fq_builder[] = "rels.isViewableByUser:$name";
+    $roles = $user->roles;
+    foreach ($roles as $role) {
+      $fq_builder[] = "rels.isViewableByRole:$role";
+    }
+  }
+  $fq_builder[] = '(*:* NOT rels.isViewableByRole:* AND NOT rels.isViewableByUser:*)';
+  $fq = implode(' OR ', $fq_builder);
+  $processor->solrParams['fq'][]= $fq;
+//  return $fq;
+}

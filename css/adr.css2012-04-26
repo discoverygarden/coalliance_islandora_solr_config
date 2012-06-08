@@ -64,7 +64,7 @@
 }
 
 .results div.metadata {
-     width: 605px;
+     width: 100%;
 }
 
 .results div.metadata ul {
@@ -85,7 +85,6 @@
 
 .results div.metadata ul li.fulltext {
      font-style:italic;
-	 word-wrap: break-word;
 }
 
 .facet-list ul {
