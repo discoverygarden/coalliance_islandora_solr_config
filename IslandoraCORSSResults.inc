@@ -24,14 +24,13 @@ class IslandoraCORSSResults extends IslandoraSolrResults {
 
 
   function printRSS($solrQueryProcessor, $title = "Search Results") {
-
     global $base_url;
-    module_load_include('inc', 'islandora_solr_config', 'IslandoraCOSolrResults');
-    $co_results = new IslandoraCOSolrResults();
-
+    module_load_include('inc', 'islandora_co_solr_config', 'IslandoraCOSolrResults');
+    $co_results = new IslandoraCOSolrResults();    
     $upperLimit = $solrQueryProcessor->solrResult->response->numFound;
     $lowerLimit = 0;
-    $increment = 100;
+    $increment = 1000;
+
 
 
     $row_count = 0;
