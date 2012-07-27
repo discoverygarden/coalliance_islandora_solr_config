@@ -6,15 +6,6 @@
  * @file
  * Configuration module for islandora_solr_search.module
  */
-function islandora_co_solr_config_menu() {
-  $items['islandora/solr/rss'] = array(
-    'page callback' => 'return_recent',
-    'access arguments' => array('view fedora collection'), //depends of fedora_repository view
-    'type' => MENU_CALLBACK,
-  );
-  return $items;
-}
-
 function islandora_co_solr_config_islandora_solr_primary_display() {
 
   return array(
@@ -81,29 +72,6 @@ function islandora_co_solr_config_help($path, $arg) {
         ", array('!page' => l("Islandora_solr_search configuration page", 'admin/settings/islandora_solr_search'),)
       );
   }
-}
-
-function return_recent($query=NULL, $fq=NULL, $dismax=NULL) {
-
-  global $queryClass;
-  islandora_solr_search_init();
-  if (!isset($query)) {
-    $query = '*:*';
-  }
-  // Build and execute Apache Solr query
-  $queryResult = $queryClass->buildAndExecuteQuery($query, $fq, $dismax, array('sort' => 'date_s desc'));
-  $secondary_profiles = module_invoke_all("islandora_solr_secondary_display");
-  $profile = $secondary_profiles['rss'];
-  require_once(drupal_get_path('module', $profile['module']) . '/' . $profile['file']);
-  $solrClass = $profile['class'];
-  $solrFunction = $profile['function'];
-  $implementation = new $solrClass();
-  $output = $implementation->$solrFunction($queryClass);
-
-  return $output;
-
-
-//  return $queryResult;
 }
 
 function islandora_co_solr_config_islandora_solr_search_query_processor($processor) {

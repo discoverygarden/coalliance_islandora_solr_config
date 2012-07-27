@@ -129,7 +129,7 @@ class ADRCOSPLSolrResults extends IslandoraSolrResults {
         }
       }
       else {
-        $output .= $ $doc['Date_Issued'];
+        $output .= $doc['Date_Issued'];
       }
       $output .= '</li>';
     }
