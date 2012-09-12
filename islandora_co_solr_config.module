@@ -51,6 +51,16 @@ function islandora_co_solr_config_islandora_solr_secondary_display() {
       'description' => 'Parse a complete resultset as an RSS feed',
       'logo' => '<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/18px-Feed-icon.svg.png" class="islandora_solr_secondary_display_icon">',
     ),
+    'rss-pcospl' => array(
+      'name' => t('RSS PCOSPL'),
+      'module' => 'islandora_co_solr_config',
+      'file' => 'ADRCOSPLRSSResults.inc',
+      'class' => 'ADRCOSPLRSSResults',
+      'function' => 'printRSS',
+      'description' => 'Parse a complete resultset as an RSS feed',
+      'logo' => '<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Feed-icon.svg/18px-Feed-icon.svg.png" class="islandora_solr_
+secondary_display_icon">',
+    ),
   );
 }
 

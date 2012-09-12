@@ -67,7 +67,7 @@ class ADRCOSPLSolrResults extends IslandoraSolrResults {
     return $output;
   }
 
-  function build_list($doc, $highlightResults, $highlight_field) {
+  function build_list($doc, $highlightResults, $highlight_field, $link_to_object = TRUE) {
     $pid = $doc['PID'];
     $highlight_text = "";
     if (is_array($highlightResults[$pid][$highlight_field])) {
@@ -80,8 +80,12 @@ class ADRCOSPLSolrResults extends IslandoraSolrResults {
     }
     $output .= '<tr><td><div class="thumbnail">';
     $img = "<img src='$base_url/fedora/repository/$pid/TN'/>";
-    $output .= l($img, "fedora/repository/$pid", array('attributes' => array('title' => $title), 'html' => 'true'));
-    $output .= '<td><div class="metadata"><a href="' . $base_url . '/fedora/repository/' . $pid . '">' . $title . '</a><ul>';
+    $output .= l($img, "fedora/repository/$pid", array('attributes' => array('title' => $title), 'html' => 'true')) . '</div></td>';
+    $output .= '<td><div class="metadata">';
+    if($link_to_object == TRUE) {
+        $output .= '<a href="' . $base_url . '/fedora/repository/' . $pid . '">' . $title . '</a>';
+    }
+    $output .= '<ul>';
 
     if (!empty($highlight_text)) {
       $output .= '<li class="fulltext">';
