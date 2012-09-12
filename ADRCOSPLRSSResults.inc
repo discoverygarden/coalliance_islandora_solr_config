@@ -10,13 +10,13 @@ module_load_include('inc', 'islandora_solr_search', 'IslandoraSolrResults');
  * Extention of IslandoraSolrResults for templating purposes.
  * This overrides the displayResults function to provide an alternate display type.
  */
-class IslandoraCORSSResults extends IslandoraSolrResults {
+class ADRCOSPLRSSResults extends IslandoraSolrResults {
 
   static $facetSeparator = '~'; //used to separate facets in url
   static $slashReplacement = '~slsh~'; // a pattern used to replace / in url's the slash breaks drupal clean url's
   public static $SEARCH_CLASS_ADVANCED_SEARCH_NUMBER_FIELDS = 5;
 
-  function IslandoraCORSSResults() {
+  function ADRCOSPLRSSResults() {
     parent::__construct();
 //module_load_include('php', 'islandora_solr_search', 'Solr/Service');
   }
@@ -24,13 +24,13 @@ class IslandoraCORSSResults extends IslandoraSolrResults {
 
 
   function printRSS($solrQueryProcessor, $title = "Search Results") {
-    global $base_url;
     //clean up this code!!!!!
-    module_load_include('inc', 'islandora_co_solr_config', 'IslandoraCOSolrResults');
-    $co_results = new IslandoraCOSolrResults();    
+    
+    global $base_url;
+    module_load_include('inc', 'islandora_co_solr_config', 'ADRCOSPLSolrResults');
+    $co_results = new ADRCOSPLSolrResults();    
     $upperLimit = $solrQueryProcessor->solrResult->response->numFound;
     $lowerLimit = 0;
-    $increment = 1000;
 
 
     $row_count = 0;
@@ -41,10 +41,12 @@ class IslandoraCORSSResults extends IslandoraSolrResults {
     $solrQueryProcessor->solrLimit = 30000;
     $solrQueryProcessor->executeQuery();
     $rawResponse = $solrQueryProcessor->solrResult->getRawResponse();
+    $responseData = json_decode($rawResponse, true);
     $docs = $responseData['response']['docs'];
-
+    
     // this is where we switch to rss view
     drupal_set_header('Content-Type: application/rss+xml; charset=utf-8');
+    
 
     // set variables
     $result = array();
@@ -58,6 +60,7 @@ class IslandoraCORSSResults extends IslandoraSolrResults {
     if($limit != -1) {
       $docs = array_slice($docs, 0, $limit);
     }
+    
     $feed = '';
     if (isset($_GET['feed'])) {
       $feed = $_GET['feed'];
@@ -67,10 +70,10 @@ class IslandoraCORSSResults extends IslandoraSolrResults {
       if (empty($doc['Title'])) {
         continue;
       }
-
-      // some values are located in a single array. Revert this:
-      $rss_source = variable_get('site_name', "Default site name");
-      $rss_source_url = $base_url;
+    $rss_source = variable_get('site_name', "Default site name");
+    $rss_source_url = $base_url;
+   
+     // some values are located in a single array. Revert this:
       foreach ($doc as $key => $value) {
 
         if (is_array($value) AND count($value == 1)) {
@@ -80,7 +83,7 @@ class IslandoraCORSSResults extends IslandoraSolrResults {
 
       $result = array();
       $result['title'] = $doc['Title'];
-      //$result['link'] = $base_url . '/fedora/repository/' . htmlspecialchars($doc['PID'], ENT_QUOTES, 'utf-8');
+//      $result['link'] = $base_url . '/fedora/repository/' . htmlspecialchars($doc['PID'], ENT_QUOTES, 'utf-8');
       $result['link'] = $base_url . '/fedora/repository/' . $doc['PID'];
 
       $result['description'] = '<table>' . $co_results->build_list($doc, null, null, FALSE) .'</table>';
