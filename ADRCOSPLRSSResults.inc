@@ -18,27 +18,29 @@ class ADRCOSPLRSSResults extends IslandoraSolrResults {
 
   function ADRCOSPLRSSResults() {
     parent::__construct();
-//module_load_include('php', 'islandora_solr_search', 'Solr/Service');
   }
 
 
 
   function printRSS($solrQueryProcessor, $title = "Search Results") {
-    //clean up this code!!!!!
-    
     global $base_url;
     module_load_include('inc', 'islandora_co_solr_config', 'ADRCOSPLSolrResults');
     $co_results = new ADRCOSPLSolrResults();    
     $upperLimit = $solrQueryProcessor->solrResult->response->numFound;
     $lowerLimit = 0;
 
-
-    $row_count = 0;
-    $field_counts = array();
-    $values = array();
-
+    // set limit to rss items.
+    $limit = variable_get('islandora_solr_search_num_of_results', 20);
+    if (isset($_GET['limit'])) {
+      $limit = $_GET['limit'];
+    }
+    if($limit == -1) {
+      $limit = 30000;
+    }
+    $solrQueryProcessor->solrParams['hl'] = '';
+    $solrQueryProcessor->solrParams['hl.fl'] = '';
     $solrQueryProcessor->solrStart = $lowerLimit;
-    $solrQueryProcessor->solrLimit = 30000;
+    $solrQueryProcessor->solrLimit = $limit;
     $solrQueryProcessor->executeQuery();
     $rawResponse = $solrQueryProcessor->solrResult->getRawResponse();
     $responseData = json_decode($rawResponse, true);
@@ -51,16 +53,7 @@ class ADRCOSPLRSSResults extends IslandoraSolrResults {
     // set variables
     $result = array();
     $item = array();
-
-    // set limit to rss items.
-    $limit = variable_get('islandora_solr_custom_rss_limit', 25);
-    if (isset($_GET['limit'])) {
-      $limit = $_GET['limit'];
-    }
-    if($limit != -1) {
-      $docs = array_slice($docs, 0, $limit);
-    }
-    
+   
     $feed = '';
     if (isset($_GET['feed'])) {
       $feed = $_GET['feed'];

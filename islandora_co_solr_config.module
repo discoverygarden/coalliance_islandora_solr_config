@@ -84,19 +84,3 @@ function islandora_co_solr_config_help($path, $arg) {
   }
 }
 
-function islandora_co_solr_config_islandora_solr_search_query_processor($processor) {
-  global $user;
-  $fq_builder = array();
-  if ($user->uid != 0) {
-    $name = $user->name;
-    $fq_builder[] = "rels.isViewableByUser:$name";
-    $roles = $user->roles;
-    foreach ($roles as $role) {
-      $fq_builder[] = "rels.isViewableByRole:$role";
-    }
-  }
-  $fq_builder[] = '(*:* NOT rels.isViewableByRole:* AND NOT rels.isViewableByUser:*)';
-  $fq = implode(' OR ', $fq_builder);
-  $processor->solrParams['fq'][]= $fq;
-//  return $fq;
-}
