@@ -18,14 +18,11 @@ class ADRCOSPLRSSResults extends IslandoraSolrResults {
 
   function ADRCOSPLRSSResults() {
     parent::__construct();
-//module_load_include('php', 'islandora_solr_search', 'Solr/Service');
   }
 
 
 
   function printRSS($solrQueryProcessor, $title = "Search Results") {
-    //clean up this code!!!!!
-    
     global $base_url;
     module_load_include('inc', 'islandora_co_solr_config', 'ADRCOSPLSolrResults');
     $co_results = new ADRCOSPLSolrResults();    
@@ -44,7 +41,6 @@ class ADRCOSPLRSSResults extends IslandoraSolrResults {
     $solrQueryProcessor->solrParams['hl.fl'] = '';
     $solrQueryProcessor->solrStart = $lowerLimit;
     $solrQueryProcessor->solrLimit = $limit;
-    dd($solrQueryProcessor->solrParams);
     $solrQueryProcessor->executeQuery();
     $rawResponse = $solrQueryProcessor->solrResult->getRawResponse();
     $responseData = json_decode($rawResponse, true);
