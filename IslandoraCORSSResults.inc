@@ -25,12 +25,10 @@ class IslandoraCORSSResults extends IslandoraSolrResults {
 
   function printRSS($solrQueryProcessor, $title = "Search Results") {
     global $base_url;
-    //clean up this code!!!!!
     module_load_include('inc', 'islandora_co_solr_config', 'IslandoraCOSolrResults');
-    $co_results = new IslandoraCOSolrResults();    
-    $upperLimit = $solrQueryProcessor->solrResult->response->numFound;
+    $co_results = new IslandoraCOSolrResults();
     $lowerLimit = 0;
-    $increment = 1000;
+    $docs = array();
 
     // set limit to rss items.
     $limit = variable_get('islandora_solr_search_num_of_results', 20);
@@ -45,9 +43,13 @@ class IslandoraCORSSResults extends IslandoraSolrResults {
     $solrQueryProcessor->solrStart = $lowerLimit;
     $solrQueryProcessor->solrLimit = $limit;
     $solrQueryProcessor->executeQuery();
-    $rawResponse = $solrQueryProcessor->solrResult->getRawResponse();
-    $responseData = json_decode($rawResponse, true);
-    $docs = $responseData['response']['docs'];
+
+    if($solrQueryProcessor->solrResult) {
+      $rawResponse = $solrQueryProcessor->solrResult->getRawResponse();
+      $responseData = json_decode($rawResponse, true);
+      $docs = $responseData['response']['docs'];
+    }
+    
 
     // this is where we switch to rss view
     drupal_set_header('Content-Type: application/rss+xml; charset=utf-8');
